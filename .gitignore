@@ -1,0 +1,10 @@
+node_modules
+node_modules
+.DS_Store
+
+/after-S02
+/after-S03
+/after-S05
+/after-S06
+/files-and-documents
+/data.js
