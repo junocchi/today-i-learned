@@ -4,33 +4,76 @@
   box-sizing: border-box;
 }
 
-body {
-  background-color: #374151;
-  color: #fafaf9;
-  font-family: "Sono", sans-serif;
-  padding: 40px;
+/* MAIN LAYOUT */
+.container {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .header {
   margin-bottom: 40px;
+  display: flex; /* makes its children elements to be side-by-side */
+  align-items: center; /* align its children vertically centered */
+  justify-content: space-between; /* horizontally: split the remaining space between its children */
 }
+
+.fact-form {
+  background-color: #475569;
+  margin-bottom: 40px;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-radius: 16px;
+}
+
+.columns-main {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 48px;
+}
+
+/* ELEMENTS */
+.logo-and-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-and-title img {
+  height: 68px;
+  width: 68px;
+}
+
+body {
+  background-color: #374151;
+  color: #fafaf9;
+  font-family: "Sono", sans-serif;
+  padding: 48px 64px;
+}
+
 h1 {
   font-size: 42px;
   text-transform: uppercase;
   font-family: "Coiny", sans-serif;
+  /* added the below to compensate for extra margin-top space that comes with this font */
+  line-height: 1;
+  margin-top: 6px;
 }
-.fact-form {
-  background-color: #475569;
-  margin-bottom: 40px;
-  padding: 16px 40px;
-  text-align: center;
-}
+
 .fact {
   font-size: 20px;
   line-height: 1.4;
   background-color: #475569;
   margin-bottom: 16px;
   padding: 16px 24px;
+  letter-spacing: -1px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
 .tag {
@@ -40,16 +83,108 @@ h1 {
   padding-top: 3px;
   padding-left: 10px;
   padding-right: 10px;
+  border-radius: 100px;
 }
 
-.reactions {
+.voting-buttons {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+}
+.voting-buttons button {
+  border: none;
   background-color: #94a3b8;
+  font-size: 18px;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-family: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.voting-buttons button:hover {
+  background-color: #334155;
 }
 
 ul {
   list-style: none;
 }
 
+.a:link,
+.a:visited {
+  color: #818cf8;
+  text-decoration: none;
+  margin-left: 12px;
+}
+.a:hover,
+.a:active {
+  color: #f472b6;
+  text-decoration: none;
+  margin-left: 12px;
+  transition: 0.3s;
+}
+
+.btn {
+  border: none;
+  color: inherit;
+  font-family: "Coiny", sans-serif;
+  line-height: 1;
+  text-transform: uppercase;
+  font-size: 17px;
+  padding: 16px 0 13px;
+  background-image: linear-gradient(0.25turn, #818cf8, #f472b6);
+  border-radius: 100px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn:hover {
+  transform: scale(110%) rotate(-2deg);
+}
+.btn-large {
+  font-size: 30px;
+  padding: 20px 32px 17px;
+}
+.btn-all {
+  margin-bottom: 16px;
+  width: 100%;
+}
+.btn-other-categories {
+  width: 100%;
+  background-image: none;
+}
+
+.list-of-categories {
+  margin-bottom: 16px;
+}
+
+.fact-form input,
+.fact-form select {
+  width: 220px;
+  border: none;
+  border-radius: 100px;
+  background-color: #64748b;
+  padding: 16px;
+  font-size: 18px;
+  color: inherit;
+  font-family: inherit;
+}
+
+.fact-form input:first-child {
+  flex-grow: 1;
+}
+
+.fact-form input::placeholder {
+  color: #334155;
+}
+.fact-form span {
+  font-weight: 600;
+  font-size: 18px;
+  margin-right: 18px;
+}
+
+/* FONTS */
 .coiny-regular {
   font-family: "Coiny", system-ui;
   font-weight: 400;
