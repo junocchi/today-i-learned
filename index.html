@@ -3,25 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Today I lLearned!</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Coiny&family=Sono:wght@200..800&display=swap"
       rel="stylesheet"
     />
+
     <link href="style.css" rel="stylesheet" />
+    <title>Today I lLearned!</title>
   </head>
   <body>
     <div class="container">
       <header class="header">
         <div class="logo-and-title">
-          <img src="logo.png" />
+          <img src="logo.png" alt="Today I Learned Logo" />
           <h1>Today I Learned</h1>
         </div>
-        <button class="btn btn-large">Share a Fact</button>
+
+        <button class="btn btn-large btn-open">Share a Fact</button>
       </header>
-      <form class="fact-form">
+
+      <form class="fact-form hidden">
         <input type="text" placeholder="Share a fact with the world..." />
         <span>200</span>
         <input type="text" placeholder="Trustworthy source..." />
@@ -33,6 +37,7 @@
         </select>
         <button class="btn btn-large">Post</button>
       </form>
+
       <main class="columns-main">
         <aside>
           <ul>
@@ -57,8 +62,9 @@
             </li>
           </ul>
         </aside>
+
         <section>
-          <ul>
+          <ul class="facts-list">
             <li class="fact">
               <p>
                 React is being developed by Meta (formerly facebook)
@@ -80,6 +86,7 @@
                 Millennial dads spend 3 times as much time with their kids than
                 their fathers spent with them. In 1982, 43% of fathers had never
                 changed a diaper. Today, that number is down to 3%
+
                 <a
                   class="a"
                   href="https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids"
@@ -100,5 +107,6 @@
         </section>
       </main>
     </div>
+    <script src="script.js"></script>
   </body>
 </html>
