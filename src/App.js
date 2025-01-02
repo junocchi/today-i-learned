@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./style.css";
+import supabase from "./supabase";
 
 const initialFacts = [
   {
@@ -50,7 +51,24 @@ function Counter() {
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-  const [facts, setFacts] = useState(initialFacts);
+  const [facts, setFacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(function () {
+    async function getFacts() {
+      // display Loader
+      setIsLoading(true);
+      // fetch data - async function can take some time
+      const { data: facts, error } = await supabase
+        .from("facts")
+        .select("*")
+        .order("votes_interesting", { ascending: false });
+      // update this state to facts
+      setFacts(facts);
+      setIsLoading(false); // close Loader
+    }
+    getFacts();
+  }, []);
 
   return (
     <>
@@ -61,10 +79,18 @@ function App() {
 
       <main className="columns-main">
         <CategoryFilter />
-        <FactList facts={facts} setFacts={setFacts} />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <FactList facts={facts} setFacts={setFacts} />
+        )}
       </main>
     </>
   );
+}
+
+function Loader() {
+  return <p className="message">⏳ Loading...</p>;
 }
 
 function Header({ setShowForm, showForm }) {
