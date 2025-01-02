@@ -15,6 +15,13 @@ body {
   display: none !important;
 }
 
+.message {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 32px;
+}
+
 /* MAIN LAYOUT */
 #root {
   max-width: 1000px;
