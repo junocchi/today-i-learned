@@ -2,39 +2,39 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import supabase from "./supabase";
 
-const initialFacts = [
-  {
-    id: 1,
-    text: "React is being developed by Meta (formerly facebook)",
-    source: "https://opensource.fb.com/",
-    category: "technology",
-    votesInteresting: 24,
-    votesMindblower: 9,
-    votesFalse: 4,
-    createdIn: 2021,
-  },
-  {
-    id: 2,
-    text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
-    source:
-      "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
-    category: "society",
-    votesInteresting: 11,
-    votesMindblower: 2,
-    votesFalse: 0,
-    createdIn: 2019,
-  },
-  {
-    id: 3,
-    text: "Lisbon is the capital of Portugal",
-    source: "https://en.wikipedia.org/wiki/Lisbon",
-    category: "society",
-    votesInteresting: 8,
-    votesMindblower: 3,
-    votesFalse: 1,
-    createdIn: 2015,
-  },
-];
+// const initialFacts = [
+//   {
+//     id: 1,
+//     text: "React is being developed by Meta (formerly facebook)",
+//     source: "https://opensource.fb.com/",
+//     category: "technology",
+//     votesInteresting: 24,
+//     votesMindblower: 9,
+//     votesFalse: 4,
+//     createdIn: 2021,
+//   },
+//   {
+//     id: 2,
+//     text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
+//     source:
+//       "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
+//     category: "society",
+//     votesInteresting: 11,
+//     votesMindblower: 2,
+//     votesFalse: 0,
+//     createdIn: 2019,
+//   },
+//   {
+//     id: 3,
+//     text: "Lisbon is the capital of Portugal",
+//     source: "https://en.wikipedia.org/wiki/Lisbon",
+//     category: "society",
+//     votesInteresting: 8,
+//     votesMindblower: 3,
+//     votesFalse: 1,
+//     createdIn: 2015,
+//   },
+// ];
 
 function Counter() {
   const [count, setCount] = useState(0);
@@ -62,9 +62,15 @@ function App() {
       const { data: facts, error } = await supabase
         .from("facts")
         .select("*")
-        .order("votes_interesting", { ascending: false });
-      // update this state to facts
-      setFacts(facts);
+        .order("votesInteresting", { ascending: false })
+        // to limit the number of facts showing to 1000
+        .limit(1000);
+
+      console.log(facts);
+      console.log(error);
+      // if no error, update this state to facts
+      if (!error) setFacts(facts);
+      else alert("There was a problem getting data 😕");
       setIsLoading(false); // close Loader
     }
     getFacts();
@@ -156,7 +162,7 @@ function NewFactForm({ setFacts, setShowForm }) {
       source,
       category,
       votesInteresting: 0,
-      votesMindblower: 0,
+      votesMindblowing: 0,
       votesFalse: 0,
       createdIn: new Date().getFullYear(),
     };
@@ -257,8 +263,8 @@ function Fact({ fact }) {
       </span>
       <div className="voting-buttons">
         <button>👍 {fact.votesInteresting}</button>
-        <button>🤯 {fact.votesMindblower}</button>
-        <button>⛔️ {fact.votesMindblower}</button>
+        <button>🤯 {fact.votesMindblowing}</button>
+        <button>⛔️ {fact.votesFalse}</button>
       </div>
     </li>
   );
