@@ -62,12 +62,12 @@ function App() {
       const { data: facts, error } = await supabase
         .from("facts")
         .select("*")
+        // to filter by categories equal to technology (hardcoded)
+        .eq("category", "technology")
         .order("votesInteresting", { ascending: false })
         // to limit the number of facts showing to 1000
         .limit(1000);
 
-      console.log(facts);
-      console.log(error);
       // if no error, update this state to facts
       if (!error) setFacts(facts);
       else alert("There was a problem getting data 😕");
