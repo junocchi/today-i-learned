@@ -264,7 +264,11 @@ function FactList({ facts }) {
           <Fact key={fact.id} fact={fact} />
         ))}
       </ul>
-      <p>There are {facts.length} facts in the database. Add your own!</p>
+      {facts.length === 0 ? (
+        <p>There are no facts for this category yet. Create the first one 🤩</p>
+      ) : (
+        <p>There are {facts.length} facts in the database. Add your own!</p>
+      )}
     </section>
   );
 }
