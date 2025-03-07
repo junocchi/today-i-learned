@@ -2,40 +2,6 @@ import { useEffect, useState } from "react";
 import "./style.css";
 import supabase from "./supabase";
 
-// const initialFacts = [
-//   {
-//     id: 1,
-//     text: "React is being developed by Meta (formerly facebook)",
-//     source: "https://opensource.fb.com/",
-//     category: "technology",
-//     votesInteresting: 24,
-//     votesMindblower: 9,
-//     votesFalse: 4,
-//     createdIn: 2021,
-//   },
-//   {
-//     id: 2,
-//     text: "Millennial dads spend 3 times as much time with their kids than their fathers spent with them. In 1982, 43% of fathers had never changed a diaper. Today, that number is down to 3%",
-//     source:
-//       "https://www.mother.ly/parenting/millennial-dads-spend-more-time-with-their-kids",
-//     category: "society",
-//     votesInteresting: 11,
-//     votesMindblower: 2,
-//     votesFalse: 0,
-//     createdIn: 2019,
-//   },
-//   {
-//     id: 3,
-//     text: "Lisbon is the capital of Portugal",
-//     source: "https://en.wikipedia.org/wiki/Lisbon",
-//     category: "society",
-//     votesInteresting: 8,
-//     votesMindblower: 3,
-//     votesFalse: 1,
-//     createdIn: 2015,
-//   },
-// ];
-
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -165,7 +131,7 @@ function NewFactForm({ setFacts, setShowForm }) {
   const [category, setCategory] = useState("");
   const textLength = text.length;
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     // 1. Prevent browser reload
     e.preventDefault();
     console.log(text, source, category);
@@ -174,21 +140,32 @@ function NewFactForm({ setFacts, setShowForm }) {
     if (text && isValidHttpUrl(source) && category && textLength <= 200)
       console.log("there's valid data");
 
+    // previous version (not saving new facts on supabase)
     // 3. Create new fact object
-    const newFact = {
-      id: Math.round(Math.random() * 10000),
-      text,
-      source,
-      category,
-      votesInteresting: 0,
-      votesMindblowing: 0,
-      votesFalse: 0,
-      createdIn: new Date().getFullYear(),
-    };
+    // const newFact = {
+    //   id: Math.round(Math.random() * 10000),
+    //   text,
+    //   source,
+    //   category,
+    //   votesInteresting: 0,
+    //   votesMindblowing: 0,
+    //   votesFalse: 0,
+    //   createdIn: new Date().getFullYear(),
+    // };
 
-    /* 4. Add the new fact to the UI: add the fact to state
-    We are not storing the fact in the db yet */
-    setFacts((facts) => [newFact, ...facts]);
+    // 3. Upload fact to Supabase and receive the new fact obj
+    // it will return the data and error
+    // rename data to newFact
+    const { data: newFact, error } = await supabase
+      .from("facts")
+      .insert([{ text, source, category }])
+      .select();
+
+    console.log(newFact);
+
+    /* 4. Add the new fact to the state, to update the UI,
+    we need to get the first element in the array [0] */
+    setFacts((facts) => [newFact[0], ...facts]);
 
     // 5. Reset the input fields (to empty)
     setText("");
