@@ -53,28 +53,44 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [facts, setFacts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState("all");
 
-  useEffect(function () {
-    async function getFacts() {
-      // display Loader
-      setIsLoading(true);
-      // fetch data - async function can take some time
-      const { data: facts, error } = await supabase
-        .from("facts")
-        .select("*")
-        // to filter by categories equal to technology (hardcoded)
-        .eq("category", "technology")
-        .order("votesInteresting", { ascending: false })
-        // to limit the number of facts showing to 1000
-        .limit(1000);
+  /* useEffect function only executes at the beginning, 
+  when the app first loads, so if we want the page to update 
+  after pressing the category button, we have to modify the 
+  dependency array at the end of the useEffect function 
+  and include [currentCategory] in it*/
+  useEffect(
+    function () {
+      async function getFacts() {
+        // display Loader
+        setIsLoading(true);
 
-      // if no error, update this state to facts
-      if (!error) setFacts(facts);
-      else alert("There was a problem getting data 😕");
-      setIsLoading(false); // close Loader
-    }
-    getFacts();
-  }, []);
+        /* select all the columns from our "facts" table
+      and store the data in a variable called "query". 
+      Its not loading the query yet, just building the query */
+        let query = supabase.from("facts").select("*");
+
+        if (currentCategory !== "all")
+          query = query.eq("category", currentCategory);
+
+        // fetch data - async function can take some time
+        const { data: facts, error } = await query
+          .order("votesInteresting", { ascending: false })
+          // to limit the number of facts showing to 1000
+          .limit(1000);
+
+        // if no error, update this state to facts
+        if (!error) setFacts(facts);
+        else alert("There was a problem getting data 😕");
+        setIsLoading(false); // close Loader
+      }
+      getFacts();
+    },
+    /* added currentCategory to the dependency array, so that
+    the page will reload when the category buttons are clicked */
+    [currentCategory]
+  );
 
   return (
     <>
@@ -84,7 +100,10 @@ function App() {
       ) : null}
 
       <main className="columns-main">
-        <CategoryFilter />
+        {/* pass setCurrentCategory function as a prop 
+        inside CategoryFilter component,
+        which manages the categories buttons clicks */}
+        <CategoryFilter setCurrentCategory={setCurrentCategory} />
         {isLoading ? (
           <Loader />
         ) : (
@@ -208,18 +227,25 @@ function NewFactForm({ setFacts, setShowForm }) {
   );
 }
 
-function CategoryFilter() {
+// accept the setCurrentCategory prop destructuring it
+function CategoryFilter({ setCurrentCategory }) {
   return (
     <aside>
       <ul>
         <li className="list-of-categories">
-          <button className="btn btn-all">All</button>
+          <button
+            className="btn btn-all"
+            onClick={() => setCurrentCategory("all")}
+          >
+            All
+          </button>
         </li>
         {CATEGORIES.map((cat) => (
           <li key={cat.name} className="list-of-categories">
             <button
               className="btn btn-other-categories"
               style={{ backgroundColor: cat.color }}
+              onClick={() => setCurrentCategory(cat.name)}
             >
               {cat.name}
             </button>
