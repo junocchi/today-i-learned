@@ -70,6 +70,7 @@ function App() {
         inside CategoryFilter component,
         which manages the categories buttons clicks */}
         <CategoryFilter setCurrentCategory={setCurrentCategory} />
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -251,12 +252,12 @@ function CategoryFilter({ setCurrentCategory }) {
   );
 }
 
-function FactList({ facts }) {
+function FactList({ facts, setFacts }) {
   return (
     <section>
       <ul className="facts-list">
         {facts.map((fact) => (
-          <Fact key={fact.id} fact={fact} />
+          <Fact key={fact.id} fact={fact} setFacts={setFacts} />
         ))}
       </ul>
       {facts.length === 0 ? (
@@ -268,7 +269,35 @@ function FactList({ facts }) {
   );
 }
 
-function Fact({ fact }) {
+function Fact({ fact, setFacts }) {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  async function handleVote() {
+    setIsUpdating(true);
+
+    const { data: updatedFact, error } = await supabase
+      .from("facts")
+      // update votesInteresting on supabase (not in the UI)
+      .update({ votesInteresting: fact.votesInteresting + 1 })
+      .eq("id", fact.id)
+      /* select fact from supabase, so that we can update our local
+      facts state array */
+      .select();
+    setIsUpdating(false);
+
+    if (!error) {
+      /* f is the updated fact
+      1.we define the newFact state by creating a new array based on the existing one
+      2.we loop over the array, looking for the obj with the same id as the one we are updating
+      3.if the ids match, we update the current object with the updatedFact object
+      4.we keep the other objects (dif id) the same
+      */
+      setFacts((facts) =>
+        facts.map((f) => (f.id === fact.id ? updatedFact[0] : f))
+      );
+    }
+  }
+
   return (
     <li className="fact">
       <p>
@@ -287,7 +316,13 @@ function Fact({ fact }) {
         {fact.category}
       </span>
       <div className="voting-buttons">
-        <button>👍 {fact.votesInteresting}</button>
+        <button
+          onClick={handleVote}
+          // this is to avoid multiple clicks (which happens in slow 3G)
+          disabled={isUpdating}
+        >
+          👍 {fact.votesInteresting}
+        </button>
         <button>🤯 {fact.votesMindblowing}</button>
         <button>⛔️ {fact.votesFalse}</button>
       </div>
