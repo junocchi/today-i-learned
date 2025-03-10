@@ -168,8 +168,10 @@ function NewFactForm({ setFacts, setShowForm }) {
     console.log(newFact);
 
     /* 4. Add the new fact to the state, to update the UI,
-    we need to get the first element in the array [0] */
-    setFacts((facts) => [newFact[0], ...facts]);
+    we need to get the first element in the array [0],
+    but only if no error. Otherwise newFact will become null and
+    we will add null to the array */
+    if (!error) setFacts((facts) => [newFact[0], ...facts]);
 
     // 5. Reset the input fields (to empty)
     setText("");
