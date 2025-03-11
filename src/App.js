@@ -70,6 +70,7 @@ function App() {
         inside CategoryFilter component,
         which manages the categories buttons clicks */}
         <CategoryFilter setCurrentCategory={setCurrentCategory} />
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -168,8 +169,10 @@ function NewFactForm({ setFacts, setShowForm }) {
     console.log(newFact);
 
     /* 4. Add the new fact to the state, to update the UI,
-    we need to get the first element in the array [0] */
-    setFacts((facts) => [newFact[0], ...facts]);
+    we need to get the first element in the array [0],
+    but only if no error. Otherwise newFact will become null and
+    we will add null to the array */
+    if (!error) setFacts((facts) => [newFact[0], ...facts]);
 
     // 5. Reset the input fields (to empty)
     setText("");
@@ -249,12 +252,12 @@ function CategoryFilter({ setCurrentCategory }) {
   );
 }
 
-function FactList({ facts }) {
+function FactList({ facts, setFacts }) {
   return (
     <section>
       <ul className="facts-list">
         {facts.map((fact) => (
-          <Fact key={fact.id} fact={fact} />
+          <Fact key={fact.id} fact={fact} setFacts={setFacts} />
         ))}
       </ul>
       {facts.length === 0 ? (
@@ -266,7 +269,36 @@ function FactList({ facts }) {
   );
 }
 
-function Fact({ fact }) {
+function Fact({ fact, setFacts }) {
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  async function handleVote(voteType) {
+    setIsUpdating(true);
+
+    // we rename data to updatedFact
+    const { data: updatedFact, error } = await supabase
+      .from("facts")
+      // update votes on supabase (not in the UI)
+      .update({ [voteType]: fact[voteType] + 1 })
+      .eq("id", fact.id)
+      /* select fact from supabase, so that we can update our local
+      facts state array */
+      .select();
+    setIsUpdating(false);
+
+    if (!error) {
+      /* f is the updated fact
+      1.we define the newFact state by creating a new array based on the existing one
+      2.we loop over the array, looking for the obj with the same id as the one we are updating
+      3.if the ids match, we update the current object with the updatedFact object
+      4.we keep the other objects (dif id) the same
+      */
+      setFacts((facts) =>
+        facts.map((f) => (f.id === fact.id ? updatedFact[0] : f))
+      );
+    }
+  }
+
   return (
     <li className="fact">
       <p>
@@ -285,9 +317,24 @@ function Fact({ fact }) {
         {fact.category}
       </span>
       <div className="voting-buttons">
-        <button>👍 {fact.votesInteresting}</button>
-        <button>🤯 {fact.votesMindblowing}</button>
-        <button>⛔️ {fact.votesFalse}</button>
+        <button
+          // define an arrow function that will call handleVote with
+          // the argument "votesInteresting"
+          onClick={() => handleVote("votesInteresting")}
+          // this is to avoid multiple clicks (which happens in slow 3G)
+          disabled={isUpdating}
+        >
+          👍 {fact.votesInteresting}
+        </button>
+        <button
+          onClick={() => handleVote("votesMindblowing")}
+          disabled={isUpdating}
+        >
+          🤯 {fact.votesMindblowing}
+        </button>
+        <button onClick={() => handleVote("votesFalse")} disabled={isUpdating}>
+          ⛔️ {fact.votesFalse}
+        </button>
       </div>
     </li>
   );
