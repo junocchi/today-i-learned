@@ -272,13 +272,14 @@ function FactList({ facts, setFacts }) {
 function Fact({ fact, setFacts }) {
   const [isUpdating, setIsUpdating] = useState(false);
 
-  async function handleVote() {
+  async function handleVote(voteType) {
     setIsUpdating(true);
 
+    // we rename data to updatedFact
     const { data: updatedFact, error } = await supabase
       .from("facts")
-      // update votesInteresting on supabase (not in the UI)
-      .update({ votesInteresting: fact.votesInteresting + 1 })
+      // update votes on supabase (not in the UI)
+      .update({ [voteType]: fact[voteType] + 1 })
       .eq("id", fact.id)
       /* select fact from supabase, so that we can update our local
       facts state array */
@@ -317,14 +318,23 @@ function Fact({ fact, setFacts }) {
       </span>
       <div className="voting-buttons">
         <button
-          onClick={handleVote}
+          // define an arrow function that will call handleVote with
+          // the argument "votesInteresting"
+          onClick={() => handleVote("votesInteresting")}
           // this is to avoid multiple clicks (which happens in slow 3G)
           disabled={isUpdating}
         >
           👍 {fact.votesInteresting}
         </button>
-        <button>🤯 {fact.votesMindblowing}</button>
-        <button>⛔️ {fact.votesFalse}</button>
+        <button
+          onClick={() => handleVote("votesMindblowing")}
+          disabled={isUpdating}
+        >
+          🤯 {fact.votesMindblowing}
+        </button>
+        <button onClick={() => handleVote("votesFalse")} disabled={isUpdating}>
+          ⛔️ {fact.votesFalse}
+        </button>
       </div>
     </li>
   );
