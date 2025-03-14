@@ -207,7 +207,7 @@ ul {
   background-image: none;
 }
 
-/* FORM & @media for elements*/
+/* FORM & @media for elements */
 .fact-form {
   background-color: #475569;
   margin-bottom: 40px;
@@ -279,7 +279,7 @@ ul {
   font-variation-settings: "MONO" 1;
 }
 
-// from here: to make the app mobile responsive
+/* from here: to make the app mobile responsive */
 @media (max-width: 900px) {
   .main {
     grid-template-columns: 1fr;
