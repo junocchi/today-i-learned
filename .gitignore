@@ -1,0 +1,9 @@
+node_modules
+node_modules
+.DS_Store
+.env
+
+/after-S02
+/after-S03
+/after-S05
+src/supabase.js
